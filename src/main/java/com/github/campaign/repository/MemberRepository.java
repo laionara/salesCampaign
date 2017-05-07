@@ -25,5 +25,10 @@ public class MemberRepository {
 			return null;
 		}
 	}
+
+	public TeamMember save(TeamMember member) {
+		manager.persist(member);
+		return member;
+	}
 	
 }

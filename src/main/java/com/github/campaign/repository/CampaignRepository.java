@@ -35,9 +35,19 @@ public class CampaignRepository {
 		return q.getResultList();
 	}
 	
-	public List<Campaign> findByTeam(long idTeam) {
-		Query q = manager.createQuery("SELECT p FROM " + Campaign.class.getName() + " p where p.team.id= :id");
+	public List<Campaign> findValidsByTeam(long idTeam) {
+		Query q = manager.createQuery("SELECT p FROM " + Campaign.class.getName() + " p where p.team.id= :id"
+				+ " and p.startDate >= NOW() and p.endDate < NOW()");
 		q.setParameter("id", idTeam);
+		
+		return q.getResultList();
+	}
+	
+	public List<Campaign> findNextByTeam(long idTeam) {
+		Query q = manager.createQuery("SELECT p FROM " + Campaign.class.getName() + " p where p.team.id= :id"
+				+ "and :date after p.startDate ");
+		q.setParameter("id", idTeam);
+		q.setParameter("date", new Date());
 		
 		return q.getResultList();
 	}

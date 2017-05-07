@@ -31,13 +31,7 @@ public class Team {
 	@Column
 	private String name;
 	
-	@OneToMany(mappedBy = "team", targetEntity = Campaign.class, 
-			fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private List<Campaign> campaignList;
-	
-	
-	
-	
+		
 	public long getId() {
 		return id;
 	}
