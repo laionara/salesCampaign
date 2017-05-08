@@ -26,30 +26,23 @@ public class CampaignService {
 	
 	private CampaignResponse response = new CampaignResponse();
 	
-	
-	//retornar campanhas vencidas
-	public CampaignResponse findByCampaignInvalid(){
-		List<Campaign> campaignList = new ArrayList<Campaign>();
-		campaignList = campaignDAO.findByCampaignInvalid();
-		if(!campaignList.isEmpty()){
-			for(Campaign campaign: campaignList){
-				//response.
-			}
-		}else{
-			response.setMessage("CEP já cadastrado");
-		}
-		
-		return response;
-	}
-
-	//buscar campanha por id
+	/**buscar campanha por id
+	 * 
+	 */
 	public CampaignResponse findById(long id) {
 		Campaign campaign = campaignDAO.findByCampaign(id);
-		this.response.setNameCampaign(campaign.getName());
+		if(campaign != null){
+			this.response.setNameCampaign(campaign.getName());
+		}else{
+			this.response.setMessage("Campanha não encontrada");
+		}
 		return response;
 	}
 	
-	//incluir campanha
+	/**
+	 * Antes de incluir uma nova campanha, é verificado se a data de vigência dessa campanha coincide com as datas das outras já cadastradas
+	 * e se existe um time pré-cadastrado para associar a campanha
+	 */
 	public CampaignResponse includeCampaign(CampaignRequest campaignRequest){
 		List<Campaign> campaignList;
 		campaignList = this.verifyValidity(campaignRequest.getStartDate(), campaignRequest.getEndDate());
@@ -74,8 +67,12 @@ public class CampaignService {
 
 	}
 	
-	//comparar a validade das campanhas
-	private List<Campaign> verifyValidity(Date startDate, Date endDate) {
+	/**
+	 * Verifica se a data de vigência da nova campanha coincide com as datas das outras já cadastradas
+	 * Caso as datas coincidam, essas campanhas são armazenadas em uma lista e enviadas como parametro para o método alterValidityCampaign()
+	 * que irá acrescentar um dia a mais ao fim da vigência de cada campanha
+	 */
+	public List<Campaign> verifyValidity(Date startDate, Date endDate) {
 		List<Campaign> campaignList = new ArrayList<Campaign>();
 		if(startDate != null && endDate!=null){
 			campaignList = this.campaignDAO.findByValidity(startDate, endDate);
@@ -87,12 +84,15 @@ public class CampaignService {
 	}
 	
 	//TODO 
-	private void verifyAllCampaign(List<Campaign> campaignList) {
+	public void verifyAllCampaign(List<Campaign> campaignList) {
 		
 	}
 	
-	// alterar a validade de campanhas que estejam com datas iguais
-	private void alterValidityCampaign(List<Campaign> campaignList) {
+	/**
+	 *  alterar a validade de campanhas que estejam com datas iguais
+	 * 
+	 */
+	public void alterValidityCampaign(List<Campaign> campaignList) {
 		for(Campaign campaign: campaignList){
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(campaign.getEndDate()); // Objeto Date() do usuário
@@ -103,8 +103,10 @@ public class CampaignService {
 		
 	}
 
-	//formatar a resposta para o usuário 
-	private CampaignResponse formatReturn(Campaign campaign, CampaignResponse response2) {
+	/**formatar a resposta para o usuário
+	 * 
+	 */
+	public CampaignResponse formatReturn(Campaign campaign, CampaignResponse response2) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		String startDate = dateFormat.format(campaign.getStartDate());
 		String endDate = dateFormat.format(campaign.getEndDate());
@@ -113,6 +115,9 @@ public class CampaignService {
 		return response;
 	}
 
+	/** excluir campanha
+	 * 
+	 */
 	public CampaignResponse delete(Long id) {
 		CampaignResponse campaignResponse = new CampaignResponse();
 		Campaign campaing = this.campaignDAO.findByCampaign(id);
@@ -125,6 +130,10 @@ public class CampaignService {
 		return campaignResponse;
 	}
 
+	
+	/** atualizar campanha
+	 * 
+	 */
 	public CampaignResponse update(CampaignRequest campaignRequest, long id) {
 		CampaignResponse campaignResponse = new CampaignResponse();
 		Campaign campaing = this.campaignDAO.findByCampaign(id);

@@ -25,23 +25,18 @@ public class CampaignController {
 	@Autowired
 	private CampaignService campaignService;
 	
-//	/**
-//	 * Redireciona a url /form para a página JSP do formulário 
-//	 */
-//	@RequestMapping(value = "/form", method = RequestMethod.GET)
-//	public ModelAndView form() {
-//		return new ModelAndView("/campaign/campaignForm", "campaign", new Campaign());
-//	}
-	
-	//buscar por id
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces={"application/json; charset=UTF-8"})
+	/**
+	 * buscar por id
+	 */
+	@RequestMapping(value = "/consult/{id}", method = RequestMethod.GET, produces={"application/json; charset=UTF-8"})
 	public @ResponseBody CampaignResponse getCampaign(@PathVariable("id") long id) {
 		return campaignService.findById(id);
 		
 	}
 	
-	
-	//incluir campanha
+	/**
+	 * incluir campanha
+	 */
 	@RequestMapping( method = RequestMethod.POST, produces={"application/json; charset=UTF-8"})
 	public @ResponseBody CampaignResponse include(@RequestBody CampaignRequest campaignRequest) {
 		CampaignResponse response = new CampaignResponse();

@@ -4,7 +4,9 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
+import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -17,7 +19,8 @@ import com.github.campaign.model.Campaign;
 public class CampaignRepository {
 
 	@PersistenceContext
-	private EntityManager manager;
+	public EntityManager manager ;
+
 	
 	public Campaign findByCampaign(Long id) {
 		try {
@@ -79,6 +82,14 @@ public class CampaignRepository {
 	public void delete(Campaign campaign) {
 		manager.remove(campaign);
 		
+	}
+
+	public EntityManager getManager() {
+		return manager;
+	}
+
+	public void setManager(EntityManager manager) {
+		this.manager = manager;
 	}
 	
 
