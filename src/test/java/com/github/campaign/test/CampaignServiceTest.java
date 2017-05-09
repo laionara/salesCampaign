@@ -1,17 +1,18 @@
 package com.github.campaign.test;
 
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -33,7 +34,7 @@ public class CampaignServiceTest {
 	@Mock
 	private CampaignService campaignService;
 	
-	@InjectMocks
+	@Mock
 	private CampaignRepository campaignDAO;
 	
 	@Mock
@@ -48,25 +49,35 @@ public class CampaignServiceTest {
 	@Mock
 	private CampaignResponse response;
 	
-	private Query query;
 
 	@Before
 	public void setUp(){
-		this.campaignService = new CampaignService();
-		this.campaignDAO = new CampaignRepository();
+		this.campaignService = Mockito.spy(CampaignService.class);
+		this.campaignDAO = Mockito.spy(CampaignRepository.class);
 		campaignDAO.manager = Mockito.mock(EntityManager.class);
+		
+	}
+	@Test
+	public void testValidityWithoutDate(){
+		//Arrange
+		List<Campaign> campaignList = campaignService.verifyValidity(null, null);
+		verify(campaignDAO, Mockito.never()).findByValidity(any(Date.class), any(Date.class));
+		Assert.assertTrue(campaignList.isEmpty());
 		
 	}
 	
 	@Test
 	public void testFindByIdNull(){
 		//Arrange
-		this.response = new CampaignResponse();
+		
 		//Act
-		when(campaignDAO.manager.createQuery("queryName")).thenReturn(query);
-		this.campaignDAO.findByCampaign(any(long.class));
+		long id = 10;
+		CampaignResponse response = campaignService.findById(id);
+		when(this.campaignDAO.findByCampaign(id)).thenReturn(null);
+		
 		//test
-		assertEquals("Campanha não encontrada", this.campaing, null);
+		Assert.assertEquals(response.getMessage(), "Campanha não encontrada");
+		
 	}
 	
 	@Test
